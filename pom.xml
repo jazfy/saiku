@@ -85,10 +85,6 @@
             <url>http://nexus.pentaho.org/content/repositories/public-snapshots/</url>
         </repository>
         <repository>
-            <id>atlassian2</id>
-            <url>http://repository.opencastproject.org/</url>
-        </repository>
-        <repository>
             <id>central</id>
             <name>Maven Repository Switchboard</name>
             <layout>default</layout>
