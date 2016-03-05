@@ -126,6 +126,12 @@ public class SessionResource  {
 	  Map<String, Object> sess = null;
 	  try {
 		sess = sessionService.getSession();
+		  if (sess.size()==0){
+			  //尚未登录
+			  sessionService.login(req, "admin", "admin");
+			  sess = sessionService.getSession();
+			  log.debug("unlogin user login with admin " + sess);
+		  }
 	  } catch (Exception e) {
 		return Response.serverError().entity(e.getLocalizedMessage()).build();
 	  }
