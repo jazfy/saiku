@@ -167,9 +167,13 @@ public class ThinQueryService implements Serializable {
 
             CellSet cs = stmt.executeOlapQuery(mdx);
             queryContext.store(ObjectKey.RESULT, cs);
+            //追踪代码cs使用
+            log.info("cs:" + cs.toString());
             if (query != null) {
                 queryContext.store(ObjectKey.QUERY, query);
             }
+            //追踪代码query使用
+            log.info("query:" + query.toString());
             return cs;
         } finally {
             stmt.close();
@@ -209,17 +213,18 @@ public class ThinQueryService implements Serializable {
 
             Long start = (new Date()).getTime();
             log.debug("Query Start");
-            CellSet cellSet =  executeInternalQuery(tq);
+            CellSet cellSet =  executeInternalQuery(tq); //这是执行mdx语句的地方，需要较长时间
             log.debug("Query End");
             String runId = "RUN#:" + ID_GENERATOR.get();
             Long exec = (new Date()).getTime();
 
-            CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cellSet,formatter);
+            CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cellSet,formatter);//这是处理数据的地方，需要非常长的时间
             Long format = (new Date()).getTime();
-
+            log.debug("cellSet2Matrix End");
             if (ThinQuery.Type.QUERYMODEL.equals(tq.getType()) && formatter instanceof FlattenedCellSetFormatter && tq.hasAggregators()) {
                 calculateTotals(tq, result, cellSet, formatter);
             }
+            log.debug("calculateTotals End");
             Long totals = (new Date()).getTime();
             log.info(runId + "\tSize: " + result.getWidth() + "/" + result.getHeight() + "\tExecute:\t" + (exec - start)
                     + "ms\tFormat:\t" + (format - exec) + "ms\tTotals:\t" + (totals - format) + "ms\t Total: " + (totals - start) + "ms");
